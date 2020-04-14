@@ -1,0 +1,49 @@
+<div class="mat-elevation-z8">
+    <mat-table [dataSource] = "taskList" matSort>
+
+        <ng-container matColumnDef = "title">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Title</mat-header-cell>
+            <mat-cell *matCellDef = "let row">{{row.title}}</mat-cell>
+        </ng-container>
+        
+        <ng-container matColumnDef = "state">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>State</mat-header-cell>
+            <mat-cell *matCellDef = "let row">{{row.state}}</mat-cell>
+        </ng-container>
+        
+        <ng-container matColumnDef = "description">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Description</mat-header-cell>
+            <mat-cell *matCellDef = "let row">{{row.description}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef = "scheduledDate">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Schedule Date</mat-header-cell>
+            <mat-cell *matCellDef = "let row">{{row.scheduledDate}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef = "actions">
+            <mat-header-cell *matHeaderCellDef></mat-header-cell>
+            <mat-cell *matCellDef = "let row">
+                <button mat-icon-button> <mat-icon>launch</mat-icon> </button>
+                <button mat-icon-button color="warn" (click) = "onDelete(row)" > <mat-icon>delete_outline</mat-icon> </button>
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef = "loading">
+            <mat-footer-cell *matFooterCellDef  colspan ="6">
+                Loading data... 
+            </mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef = "noData">
+            <mat-footer-cell *matFooterCellDef  colspan ="6">
+                No records to show!! 
+            </mat-footer-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef = "columnSettings"></mat-header-row>
+        <mat-row *matRowDef = "let row; columns: columnSettings"></mat-row>
+        <mat-footer-row *matFooterRowDef= "['loading']" [ngClass] ="{'hide' : taskList != null}"></mat-footer-row>
+        <mat-footer-row *matFooterRowDef= "['noData']" [ngClass] ="{'hide' : !(taskList != null)}"></mat-footer-row>
+    </mat-table>
+
+    <mat-paginator [pageSizeOptions] = "pageSizeOptions" [pageSize] = "5" showFirstLastButtons></mat-paginator>
+</div>
+
