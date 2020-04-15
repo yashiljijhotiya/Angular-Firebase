@@ -21,7 +21,14 @@ import { MatSortModule } from '@angular/material/sort';
 import { TaskListComponent } from './components/task-list/task-list.component';
 import { TaskFormComponent } from './components/task-form/task-form.component';
 import { TaskService } from './service/task.service';
-
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatToolbarModule} from '@angular/material/toolbar';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatDatepickerModule} from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatNativeDateModule} from '@angular/material/core';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { NotificationService } from './service/notification.service';
 
 @NgModule({
   declarations: [
@@ -45,9 +52,18 @@ import { TaskService } from './service/task.service';
     MatIconModule,
     MatPaginatorModule,
     MatSortModule,
+    MatDialogModule,
+    MatToolbarModule,
+    MatGridListModule,
+    MatDatepickerModule,
+    MatFormFieldModule,
+    MatNativeDateModule,
+    MatSnackBarModule,
     AngularFireModule.initializeApp(environment.firebaseConfig)
   ],
-  providers: [TaskService],
-  bootstrap: [AppComponent]
+
+  providers: [TaskService, NotificationService],
+  bootstrap: [AppComponent],
+  entryComponents: [TaskFormComponent]
 })
 export class AppModule { }

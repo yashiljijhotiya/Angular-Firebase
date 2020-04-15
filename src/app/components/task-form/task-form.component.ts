@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TaskService } from 'src/app/service/task.service';
+import { MatDialogRef } from '@angular/material/dialog';
+import { NotificationService } from 'src/app/service/notification.service';
 
 @Component({
   selector: 'app-task-form',
@@ -9,32 +10,48 @@ import { TaskService } from 'src/app/service/task.service';
 })
 export class TaskFormComponent implements OnInit {
 
-  formGroup: FormGroup;
 
-  constructor(private formBuilder: FormBuilder,
-    taskService: TaskService) { }
+  constructor(
+    protected taskService: TaskService,
+    protected notificationService: NotificationService,
+    private dialogRef: MatDialogRef<TaskFormComponent>) { }
+
+    // states = [
+    //   {id: 1, value: 'Created'},
+    //   {id: 2, value: 'In Progress'},
+    //   {id: 3, value: 'TODO'},
+    //   {id: 4, value: 'Completed'}
+    // ]
 
   ngOnInit(): void {
-    
-  }
-
-  private inItForm(){
-    this.formGroup = this.formBuilder.group({
-      title: ['', Validators.required],
-      state: ['', Validators.required],
-      description: ['', Validators.required],
-      scheduledDate: ['', Validators.required]
-
-    });
+    this.taskService.getTask();
   }
 
   onSubmit(){
-    console.log('test');
-
+    if(this.taskService.formGroup.valid){
+      if(!this.taskService.formGroup.get('$key').value){
+        this.taskService.insertTask(this.taskService.formGroup.value);
+      }
+      else{
+        this.taskService.updateTask(this.taskService.formGroup.value);
+      }
+     
+      this.taskService.resetForm();
+      this.taskService.inItForm();
+      this.notificationService.success('Submitted Succesfully!');
+    }
+    this.onClose();
   }
 
-  mapDataToForm(data){}
+  onClear(){
+    this.taskService.formGroup.reset();
+    this.taskService.inItForm();
+  }
 
-  mapDataFromForm(data){}
+  onClose(){
+    this.taskService.resetForm();
+    this.taskService.inItForm();
+    this.dialogRef.close();
+  }
 
 }

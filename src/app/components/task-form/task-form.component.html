@@ -1,35 +1,48 @@
-<div class="jumbotron">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-6 offset-md-3">
-                <h2>Add New Task</h2>
-                <form [formGroup]="formGroup">
-                    <div class="form-group">
-                        <label for="">Title</label>
-                        <input type="text" class="form-control" formControlName="title" placeholder="Add Title">
-                    </div>
+<mat-toolbar>
+    <span>{{taskService.formGroup.controls['$key'].value? "Modify Task" : "New Task" }}</span>
+    <button class="btn-dialog-close " mat-stroked-button (click)="onClose()" tabindex="-1">
+        <mat-icon>clear</mat-icon>
+    </button>
+</mat-toolbar>
 
-                    <div class="form-group">
-                        <label for="">State </label>
-                        <input type="text" class="form-control" formControlName="state" placeholder="Add State">
-                    </div>
+<form [formGroup]="taskService.formGroup" class="m-5">
+    <mat-grid-list cols="2" rowHeight="300px">
+        <mat-grid-title>
+            <div class="controls-container">
+                <input type="hidden" formControlName="$key">
+                <mat-form-field>
+                    <input type="text" formControlName="title" matInput placeholder="Add Title *">
+                    <mat-error>Title field is mandatory.</mat-error>
+                </mat-form-field>
+                <mat-form-field>
+                    <!-- <input type="text" formControlName="state" matInput placeholder="Add State *"> -->
+                    <mat-select formControlName="state" matInput placeholder="Select State *" >
+                    <mat-option>None</mat-option>
+                    <ng-container *ngFor="let state of taskService.states">
+                     <mat-option value="{{state.$key}}"> {{state.name}}</mat-option>
+                    </ng-container>
+                    </mat-select>
+                    <mat-error>State field is mandatory.</mat-error>
+                </mat-form-field>
+                <mat-form-field>
+                    <input type="text" formControlName="description" matInput placeholder="Add Description *">
+                    <mat-error>Description field is mandatory.</mat-error>
+                </mat-form-field>
 
-                    <div class="form-group">
-                        <label for="">Description</label>
-                        <input type="text" class="form-control" formControlName="description"
-                            placeholder="Add Description">
-                    </div>
+                <mat-form-field>
+                    <input matInput [matDatepicker]="myDatepicker" formControlName="date"
+                        placeholder="Add Scheduled Date">
+                    <mat-datepicker-toggle matSuffix [for]="myDatepicker"></mat-datepicker-toggle>
+                    <mat-datepicker #myDatepicker></mat-datepicker>
+                    <mat-error>Date field is mandatory.</mat-error>
+                </mat-form-field>
 
-                    <div class="form-group">
-                        <label for=""> Scheduled Date</label>
-                        <input type="text" class="form-control" formControlName="scheduledDate"
-                            placeholder="Add Schedule Date">
-                    </div>
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-lg  btn-block btn-info" (click)="onSubmit()">Submit</button>
-                    </div>
-                </form>
+                <div class="button-row">
+                    <button mat-raised-button color="primary" type="submit" (click)="onSubmit()"
+                        [disabled]="taskService.formGroup.invalid">Submit</button>
+                    <button mat-raised-button color="warn" (click)="onClear()">Clear</button>
+                </div>
             </div>
-        </div>
-    </div>
-</div>
+        </mat-grid-title>
+    </mat-grid-list>
+</form>

@@ -4,6 +4,9 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
 import { Task } from 'src/app/model/task.model';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { TaskFormComponent } from '../task-form/task-form.component';
+import { NotificationService } from 'src/app/service/notification.service';
 
 @Component({
   selector: 'app-task-list',
@@ -21,63 +24,56 @@ export class TaskListComponent implements OnInit {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(private taskService: TaskService) {
-
-    for(var i = 0; i < 50; i++){
-      var t = new Task();
-        t.id = `${i}`;
-        t.title = `Task ${i}`;
-        t.state =  'pending';
-        t.description =  `task ${i} desc`,
-        t.scheduledDate =  '14-Apr-20'
-        this.task.push(t);
-    }
-  }
+  constructor(
+    private taskService: TaskService,
+    private dialog: MatDialog,
+    protected notificationService: NotificationService,) { }
 
   ngOnInit(): void {
     this.getData();
   }
 
   getData() {
-    // this.taskService.getTask().subscribe(data => {
-    //   let list = data.map(item => {
-    //     return {
-    //       $key: item.key,
-    //       ...item.payload.val()
-    //     };
-    //   });
-    //   this.taskList = new MatTableDataSource(this.task);
-    //   this.taskList.sort = this.sort;
-    //   this.taskList.paginator = this.paginator;
-    // });
-    this.taskList = new MatTableDataSource(this.task);
-    this.taskList.sort = this.sort;
-    this.taskList.paginator = this.paginator;
+    this.taskService.getTask().subscribe(data => {
+      let list = data.map(item => {
+        return {
+          $key: item.key,
+          ...item.payload.val()
+        };
+      });
+      this.taskList = new MatTableDataSource(list);
+      this.taskList.sort = this.sort;
+      this.taskList.paginator = this.paginator;
+    });
   }
 
   onEdit(rowData) {
-    
+    this.taskService.populateFormData(rowData);
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = "70%";
+    this.dialog.open(TaskFormComponent, dialogConfig);
 
   }
 
-  onDelete(rowData) {
-    console.log(rowData);
-   }
+  onDelete($key) {
+    if(confirm('Are you sure you want to delete the task ?')){
+      this.taskService.deleteTask($key);
+      this.notificationService.delete("Deleted Succesfully");
+    }
+    
+  }
+
+  createNew() {
+    this.taskService.inItForm();
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = "70%";
+    this.dialog.open(TaskFormComponent, dialogConfig);
+  }
 
 
 }
 
-// export interface Element {
-//   position: number;
-//   firstName: string;
-//   lastName: string;
-//   email: string;
-// }
-
-// const ELEMENT_DATA: Element[] = [
-//   {position: 1, firstName: 'John', lastName: 'Doe', email: 'john@gmail.com'},
-//   {position: 1, firstName: 'Mike', lastName: 'Hussey', email: 'mike@gmail.com'},
-//   {position: 1, firstName: 'Ricky', lastName: 'Hans', email: 'ricky@gmail.com'},
-//   {position: 1, firstName: 'Martin', lastName: 'Kos', email: 'martin@gmail.com'},
-//   {position: 1, firstName: 'Tom', lastName: 'Paisa', email: 'tom@gmail.com'}
-// ];
